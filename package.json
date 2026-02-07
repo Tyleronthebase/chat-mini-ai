@@ -5,6 +5,6 @@
   "type": "commonjs",
   "scripts": {
     "start": "node server.js",
-    "test": "node tests/smoke.js"
+    "test": "node tests/smoke.js && node tests/storage.js"
   }
 }
