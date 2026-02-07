@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>迷你聊天AI</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="app__header">
+        <h1>迷你聊天AI</h1>
+        <p>默认本地Mock回复，支持可选API接入。</p>
+      </header>
+      <section id="chat" class="chat"></section>
+      <form id="chat-form" class="composer">
+        <input id="message" name="message" placeholder="输入消息..." autocomplete="off" />
+        <button type="submit">发送</button>
+      </form>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>

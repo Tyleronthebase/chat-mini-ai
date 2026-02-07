@@ -1,0 +1,93 @@
+* {
+  box-sizing: border-box;
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #0f1115;
+  color: #e6e7eb;
+  display: flex;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+.app {
+  width: min(860px, 100%);
+  background: #1b1e26;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.app__header h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+}
+
+.app__header p {
+  margin: 0 0 24px;
+  color: #a7adbd;
+}
+
+.chat {
+  background: #0f1115;
+  border-radius: 16px;
+  padding: 20px;
+  min-height: 360px;
+  max-height: 420px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bubble {
+  max-width: 70%;
+  padding: 12px 16px;
+  border-radius: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.bubble--user {
+  align-self: flex-end;
+  background: #4c6fff;
+  color: #fff;
+}
+
+.bubble--assistant {
+  align-self: flex-start;
+  background: #2a2f3b;
+  color: #e6e7eb;
+}
+
+.composer {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.composer input {
+  flex: 1;
+  background: #0f1115;
+  border: 1px solid #2a2f3b;
+  color: #e6e7eb;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.composer button {
+  background: #4c6fff;
+  color: #fff;
+  border: none;
+  padding: 0 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.composer button:hover {
+  background: #6a86ff;
+}
