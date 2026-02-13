@@ -4,10 +4,21 @@
   "private": true,
   "type": "commonjs",
   "dependencies": {
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "react": "^18.3.1",
+    "react-bits": "^1.0.5",
+    "react-dom": "^18.3.1",
+    "react-native-web": "^0.19.13"
   },
   "scripts": {
+    "dev": "vite --config vite.config.mjs",
+    "build": "vite build --config vite.config.mjs",
+    "preview": "vite preview --config vite.config.mjs",
     "start": "node server.js",
     "test": "node tests/smoke.js && node tests/storage.js"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.4",
+    "vite": "^7.3.1"
   }
 }

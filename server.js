@@ -18,7 +18,7 @@ function sendJson(res, statusCode, body) {
   res.end(data);
 }
 
-function sendFile(res, filePath) {
+function sendFile(res, filePath, method = "GET") {
   const ext = path.extname(filePath).toLowerCase();
   const contentType = ext === ".html"
     ? "text/html; charset=utf-8"
@@ -34,7 +34,14 @@ function sendFile(res, filePath) {
       res.end("Not Found");
       return;
     }
-    res.writeHead(200, { "Content-Type": contentType });
+    res.writeHead(200, {
+      "Content-Type": contentType,
+      "Content-Length": Buffer.byteLength(data)
+    });
+    if (method === "HEAD") {
+      res.end();
+      return;
+    }
     res.end(data);
   });
 }
@@ -119,7 +126,7 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  if (req.method !== "GET") {
+  if (req.method !== "GET" && req.method !== "HEAD") {
     res.writeHead(405);
     res.end("Method Not Allowed");
     return;
@@ -135,7 +142,7 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  sendFile(res, filePath);
+  sendFile(res, filePath, req.method);
 });
 
 server.listen(PORT, () => {
