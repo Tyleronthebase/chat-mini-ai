@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
@@ -74,10 +76,16 @@ async function handleChat(req, res) {
       const incoming = Array.isArray(payload.messages) ? payload.messages : [];
       const history = await loadMessages();
       const messages = incoming.length ? incoming : history;
+      
+      console.log("[Chat API] USE_REMOTE:", process.env.USE_REMOTE);
+      console.log("[Chat API] GOOGLE_API_KEY:", process.env.GOOGLE_API_KEY ? "已设置" : "未设置");
+      console.log("[Chat API] GOOGLE_MODEL:", process.env.GOOGLE_MODEL || "gemini-1.5-flash");
+      
       const reply = await generateReply(messages, {
-        apiKey: process.env.OPENAI_API_KEY,
-        endpoint: process.env.OPENAI_API_BASE || "https://api.openai.com/v1/chat/completions",
-        model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+        apiKey: process.env.GOOGLE_API_KEY,
+        endpoint: process.env.GOOGLE_API_BASE
+          || `https://generativelanguage.googleapis.com/v1beta/models/${process.env.GOOGLE_MODEL || "gemini-1.5-flash"}:generateContent?key=${process.env.GOOGLE_API_KEY || ""}`,
+        model: process.env.GOOGLE_MODEL || "gemini-1.5-flash",
         useRemote: process.env.USE_REMOTE === "1"
       });
       const nextMessages = [...messages, { role: "assistant", content: reply }];
@@ -88,6 +96,8 @@ async function handleChat(req, res) {
         res.end();
       });
     } catch (error) {
+      console.error("[Chat API] Error:", error.message);
+      console.error("[Chat API] Stack:", error.stack);
       writeSse(res, "error", { message: error.message || "Invalid request" });
       res.end();
     }

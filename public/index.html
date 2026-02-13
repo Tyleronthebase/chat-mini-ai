@@ -3,21 +3,71 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>迷你聊天AI</title>
+    <title>mini chat</title>
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <main class="app">
-      <header class="app__header">
-        <h1>迷你聊天AI</h1>
-        <p>默认本地Mock回复，支持可选API接入。</p>
-      </header>
-      <section id="chat" class="chat"></section>
-      <form id="chat-form" class="composer">
-        <input id="message" name="message" placeholder="输入消息..." autocomplete="off" />
-        <button type="submit">发送</button>
-      </form>
-    </main>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="sidebar__header">
+          <div class="icon-row">
+            <button id="toggle-sidebar" class="icon-btn" title="展开/收起">☰</button>
+            <button id="toggle-search" class="icon-btn" title="搜索会话">⌕</button>
+          </div>
+          <div id="search-wrap" class="search-wrap">
+            <input id="session-search" class="search-input" placeholder="搜索会话" />
+          </div>
+          <button id="new-chat" class="ghost-button">✎ 发送新对话</button>
+        </div>
+        <h3 class="sidebar__title">对话</h3>
+        <nav id="session-list" class="session-list"></nav>
+        <div class="sidebar__footer">
+          <div class="status-pill" id="session-status">就绪</div>
+          <span class="sidebar__hint">设置和帮助</span>
+        </div>
+      </aside>
+
+      <main class="chat-pane">
+        <header class="topbar">
+          <h1>mini chat</h1>
+        </header>
+
+        <section id="empty-state" class="empty-state">
+          <div class="empty-state__hello">你好</div>
+          <h2>需要我为你做些什么？</h2>
+          <div class="quick-prompts">
+            <button class="quick-chip" data-prompt="帮我做一份今天的待办安排">给我的一天注入活力</button>
+            <button class="quick-chip" data-prompt="教我快速上手这个项目">帮我学习</button>
+            <button class="quick-chip" data-prompt="随便聊点有趣的话题">随便写点什么</button>
+          </div>
+        </section>
+
+        <section id="chat" class="chat"></section>
+
+        <form id="chat-form" class="composer">
+          <textarea
+            id="message"
+            name="message"
+            rows="2"
+            placeholder="输入消息，回车发送，Shift+Enter换行"
+          ></textarea>
+          <div class="composer__actions">
+            <div class="composer__state" id="composer-state">等待输入</div>
+            <div class="toolbar">
+              <label class="select-field model-picker">
+                <select id="model-select">
+                  <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                  <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                  <option value="mock">本地 Mock</option>
+                </select>
+              </label>
+              <button id="stop-button" type="button" class="ghost-button" disabled>停止生成</button>
+              <button type="submit" class="primary-button">发送</button>
+            </div>
+          </div>
+        </form>
+      </main>
+    </div>
     <script src="/app.js"></script>
   </body>
 </html>

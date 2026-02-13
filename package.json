@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "commonjs",
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  },
   "scripts": {
     "start": "node server.js",
     "test": "node tests/smoke.js && node tests/storage.js"
