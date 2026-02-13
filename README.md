@@ -1,9 +1,10 @@
 # chat-mini-ai
 
-一个“全 JavaScript 一把梭”的聊天项目：
-- 前端：`React + Vite`
-- 后端：`Node.js` 原生 `http`
-- 能力：会话管理、流式回复（SSE）、本地持久化、可选 Google API
+一个基于 **React** + **Node.js** 的全栈极简聊天应用。
+
+- **前端**：`React 18` + `Vite` 构建
+- **后端**：`Node.js` 原生 `http` 模块 (无 Express/Koa 依赖)
+- **核心**：会话管理、流式回复 (SSE)、本地 JSON 持久化
 
 ## 功能亮点
 
