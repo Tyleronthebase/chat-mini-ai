@@ -4,7 +4,7 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const { generateReply } = require("./src/chat");
-const { loadMessages, saveMessages } = require("./src/storage");
+const { loadMessages, saveMessages, deleteSession } = require("./src/storage");
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 5173;
 const PUBLIC_DIR = path.join(__dirname, "public");
@@ -68,10 +68,19 @@ function streamText(res, text, onDone) {
 
 async function handleChat(req, res) {
   let rawBody = "";
+  const MAX_BODY = 1024 * 1024; // 1MB limit
+
   req.on("data", chunk => {
     rawBody += chunk;
+    if (Buffer.byteLength(rawBody) > MAX_BODY) {
+      res.writeHead(413, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Request body too large" }));
+      req.destroy();
+    }
   });
   req.on("end", async () => {
+    if (res.writableEnded) return;
+
     res.writeHead(200, {
       "Content-Type": "text/event-stream; charset=utf-8",
       "Cache-Control": "no-cache",
@@ -80,23 +89,24 @@ async function handleChat(req, res) {
 
     try {
       const payload = rawBody ? JSON.parse(rawBody) : {};
+      const sessionId = payload.sessionId || null;
       const incoming = Array.isArray(payload.messages) ? payload.messages : [];
-      const history = await loadMessages();
+      const history = await loadMessages(sessionId);
       const messages = incoming.length ? incoming : history;
-      
+
       console.log("[Chat API] USE_REMOTE:", process.env.USE_REMOTE);
       console.log("[Chat API] GOOGLE_API_KEY:", process.env.GOOGLE_API_KEY ? "已设置" : "未设置");
-      console.log("[Chat API] GOOGLE_MODEL:", process.env.GOOGLE_MODEL || "gemini-1.5-flash");
-      
+      console.log("[Chat API] GOOGLE_MODEL:", process.env.GOOGLE_MODEL || "gemini-2.5-flash");
+
       const reply = await generateReply(messages, {
         apiKey: process.env.GOOGLE_API_KEY,
         endpoint: process.env.GOOGLE_API_BASE
-          || `https://generativelanguage.googleapis.com/v1beta/models/${process.env.GOOGLE_MODEL || "gemini-1.5-flash"}:generateContent?key=${process.env.GOOGLE_API_KEY || ""}`,
-        model: process.env.GOOGLE_MODEL || "gemini-1.5-flash",
+          || `https://generativelanguage.googleapis.com/v1beta/models/${process.env.GOOGLE_MODEL || "gemini-2.5-flash"}:generateContent?key=${process.env.GOOGLE_API_KEY || ""}`,
+        model: process.env.GOOGLE_MODEL || "gemini-2.5-flash",
         useRemote: process.env.USE_REMOTE === "1"
       });
       const nextMessages = [...messages, { role: "assistant", content: reply }];
-      await saveMessages(nextMessages);
+      await saveMessages(sessionId, nextMessages);
       writeSse(res, "start", { ok: true });
       streamText(res, reply, () => {
         writeSse(res, "done", { ok: true });
@@ -120,8 +130,22 @@ const server = http.createServer((req, res) => {
   }
 
   if (url.pathname === "/api/history" && req.method === "GET") {
-    loadMessages()
+    const sessionId = url.searchParams.get("sessionId") || null;
+    loadMessages(sessionId)
       .then(messages => sendJson(res, 200, { messages }))
+      .catch(error => sendJson(res, 500, { error: error.message }));
+    return;
+  }
+
+  // DELETE /api/session?id=xxx
+  if (url.pathname === "/api/session" && req.method === "DELETE") {
+    const sessionId = url.searchParams.get("id");
+    if (!sessionId) {
+      sendJson(res, 400, { error: "Missing session id" });
+      return;
+    }
+    deleteSession(sessionId)
+      .then(ok => sendJson(res, ok ? 200 : 404, { ok }))
       .catch(error => sendJson(res, 500, { error: error.message }));
     return;
   }
