@@ -14,7 +14,8 @@ export default function Sidebar({
     onRenameSession,
     onDeleteSession,
     searchQuery,
-    onSearchChange
+    onSearchChange,
+    onOpenSettings
 }) {
     const [collapsed, setCollapsed] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
@@ -99,7 +100,10 @@ export default function Sidebar({
 
                     <div className="sidebar__footer">
                         <div className="status-pill">{isStreaming ? "生成中" : "就绪"}</div>
-                        <span className="sidebar__hint">设置和帮助</span>
+                        <button className="sidebar__settings-btn" onClick={onOpenSettings}>
+                            <span>⚙️</span>
+                            <span>设置和帮助</span>
+                        </button>
                     </div>
                 </>
             )}

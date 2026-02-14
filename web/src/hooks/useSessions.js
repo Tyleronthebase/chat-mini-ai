@@ -143,6 +143,13 @@ export default function useSessions() {
         }));
     }, []);
 
+    const clearAllSessions = useCallback(() => {
+        localStorage.removeItem(STORAGE_KEY);
+        const session = createSession();
+        setSessions([session]);
+        setActiveSessionId(session.id);
+    }, []);
+
     return {
         sessions,
         activeSession,
@@ -153,6 +160,7 @@ export default function useSessions() {
         handleDeleteSession,
         handleModelChange,
         addMessageToSession,
-        updateMessages
+        updateMessages,
+        clearAllSessions
     };
 }

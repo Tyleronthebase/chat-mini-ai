@@ -5,7 +5,8 @@ export default function Composer({
     model,
     onModelChange,
     onSend,
-    onStop
+    onStop,
+    sendOnEnter = true
 }) {
     const [text, setText] = useState("");
 
@@ -22,12 +23,12 @@ export default function Composer({
             <textarea
                 name="message"
                 rows={2}
-                placeholder="输入消息，回车发送，Shift+Enter换行"
+                placeholder={sendOnEnter ? "输入消息，回车发送，Shift+Enter换行" : "输入消息，点击发送按钮"}
                 value={text}
                 disabled={isStreaming}
                 onChange={(e) => setText(e.target.value)}
                 onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
+                    if (sendOnEnter && e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();
                         e.currentTarget.form?.requestSubmit();
                     }
@@ -40,6 +41,8 @@ export default function Composer({
                     <label className="select-field model-picker">
                         <select value={model} onChange={(e) => onModelChange(e.target.value)}>
                             <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+                            <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+                            <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
                         </select>
                     </label>
                     <button type="button" className="ghost-button" disabled={!isStreaming} onClick={onStop}>
