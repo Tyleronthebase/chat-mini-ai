@@ -1,114 +1,108 @@
-# chat-mini-ai
+# Chat Mini AI
 
-一个基于 **React** + **Node.js** 的全栈极简聊天应用。
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-Ready-646CFF?logo=vite)
+![Node.js](https://img.shields.io/badge/Node.js-HTTP-339933?logo=node.js)
+![Gemini](https://img.shields.io/badge/Google-Gemini-8E75B2?logo=google-gemini)
 
-- **前端**：`React 18` + `Vite` 构建
-- **后端**：`Node.js` 原生 `http` 模块 (无 Express/Koa 依赖)
-- **核心**：会话管理、流式回复 (SSE)、本地 JSON 持久化
+一个基于 **React** + **Node.js** 的全栈极简聊天应用。摒弃复杂的后端框架，回归原生 HTTP 手撸 API，配合现代化的 React 前端，打造轻量级 AI 对话体验。
 
-## 功能亮点
+---
 
-- React 前端界面（会话列表、搜索、重命名、删除、停止生成）
-- 流式响应（`/api/chat` 使用 SSE 按块返回）
-- 本地持久化（服务端 `data/chat.json` + 浏览器 `localStorage`）
-- 支持 Mock 模式（无 Key 可直接跑）
-- 支持接入 Google Generative Language API
+## ✨ 功能亮点
 
-## 技术栈
+- 💬 **流畅对话**：基于 Server-Sent Events (SSE) 的打字机流式回复体验。
+- 🤖 **智能模型**：默认集成 **Google Gemini 2.5 Flash**，极速响应。
+- 💾 **双端持久化**：服务端 JSON 文件存储 + 客户端 LocalStorage 同步。
+- 🛠️ **会话管理**：支持多会话创建、搜索、重命名及删除。
+- ⚡ **零依赖后端**：Node.js 后端不依赖 Express / Koa，仅使用原生 `http` 模块。
 
-- `react` / `react-dom`
-- `vite` / `@vitejs/plugin-react`
-- `node`（CommonJS）
-- `dotenv`
-- `react-bits`（当前项目使用其可兼容子模块）
+## 🛠 技术栈
 
-## 项目结构
+### Frontend
+- **Framework**: [React 18](https://react.dev/)
+- **Build Tool**: [Vite](https://vitejs.dev/)
+- **UI/Effects**: [react-bits](https://github.com/DavidHDev/react-bits) (提供部分动效组件支持)
+- **Styling**: Pure CSS (Minimalist design)
 
-```text
-.
-├─ server.js               # Node 服务入口（静态托管 + API）
-├─ src/
-│  ├─ chat.js              # 模型调用与回复生成逻辑
-│  └─ storage.js           # 聊天记录读写
-├─ web/                    # React 源码（Vite root）
-│  ├─ index.html
-│  └─ src/
-│     ├─ App.jsx
-│     ├─ main.jsx
-│     └─ styles.css
-├─ public/                 # Vite 构建产物（由 server.js 托管）
-├─ data/chat.json          # 服务端持久化聊天记录
-└─ tests/                  # smoke / storage 测试
-```
+### Backend
+- **Runtime**: Node.js
+- **API**: Native `http` module
+- **Streaming**: Server-Sent Events (SSE)
+- **Database**: Native File System (JSON)
 
-## 快速开始
+## 🚀 快速开始
 
-### 1) 安装依赖
+### 1. 安装依赖
 
-```zsh
+```bash
 npm install
 ```
 
-### 2) 可选：配置环境变量
+### 2. 配置环境变量
 
-```zsh
+复制 `.env.example` 为 `.env` 并填入你的 Google API Key：
+
+```bash
 cp .env.example .env
 ```
 
-`.env` 示例：
-
+配置项：
 ```dotenv
-GOOGLE_API_KEY=
+GOOGLE_API_KEY=your_api_key_here
 USE_REMOTE=1
-GOOGLE_MODEL=gemini-1.5-flash
-GOOGLE_API_BASE=
+GOOGLE_MODEL=gemini-2.5-flash  # 默认使用 2.5 Flash
 PORT=5173
 ```
 
-说明：
-- `USE_REMOTE=1` 且 `GOOGLE_API_KEY` 有值时，走远程模型
-- 其余情况默认走本地 Mock
+### 3. 开发与运行
 
-### 3) 开发模式（前端）
-
-```zsh
+**开发模式（推荐）：**
+```bash
+# 终端 1：启动 Vite 前端热更新
 npm run dev
-```
 
-### 4) 生产构建 + 本地服务
-
-```zsh
-npm run build
+# 终端 2：启动后端服务
 npm start
 ```
 
-默认访问：`http://localhost:5173`
+**生产部署：**
+```bash
+# 构建前端资源到 public/ 目录
+npm run build
 
-## 可用脚本
-
-```zsh
-npm run dev      # 启动 Vite 开发服务
-npm run build    # 构建 web/ 到 public/
-npm run preview  # 预览 Vite 构建产物
-npm start        # 启动 Node 服务（托管 public/）
-npm test         # 运行 smoke + storage 测试
+# 启动全栈服务
+npm start
 ```
 
-## API 简述
+访问地址：`http://localhost:5173`
 
-- `POST /api/chat`
-	- 入参：`{ messages: [{ role, content }, ...] }`
-	- 出参：SSE 事件流（`start/chunk/done/error`）
-- `GET /api/history`
-	- 返回：`{ messages: [...] }`
+## 📂 项目结构
 
-## 测试
-
-```zsh
-npm test
+```text
+.
+├── web/                    # React 前端源文件 (Vite Root)
+│   ├── src/                # 组件与逻辑 (App.jsx)
+│   └── index.html          # 入口 HTML
+├── public/                 # 构建产物 (由 server.js 托管)
+├── src/                    # 后端逻辑
+│   ├── chat.js             # Gemini 模型调用封装
+│   └── storage.js          # 本地 JSON 数据读写
+├── data/                   # 数据存储目录
+├── server.js               # Node.js 原生 HTTP服务器
+└── vite.config.mjs         # Vite 构建配置
 ```
 
-## 备注
+## ❤️ 致谢 (Credits)
 
-- 聊天记录会写入 `data/chat.json`
-- 当前服务已支持 `HEAD /` 健康检查（用于探活场景）
+本项目参考或使用了以下优秀的开源技术与资源：
+
+- **[React](https://react.dev/)** - 用于构建用户界面的 JavaScript 库
+- **[Vite](https://vitejs.dev/)** - 下一代前端构建工具
+- **[Google Gemini](https://ai.google.dev/)** - 提供强大的生成式 AI 模型支持
+- **[react-bits](https://github.com/DavidHDev/react-bits)** - 提供精美的 React UI 动效组件库
+- **[Node.js](https://nodejs.org/)** - JavaScript 运行时
+
+---
+
+Designed with ❤️ by Tyler
