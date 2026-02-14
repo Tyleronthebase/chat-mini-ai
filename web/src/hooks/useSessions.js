@@ -75,26 +75,26 @@ export default function useSessions() {
     }, []);
 
     const handleRenameSession = useCallback((sessionId) => {
-        setSessions((prev) => {
-            const target = prev.find((s) => s.id === sessionId);
-            if (!target) return prev;
-            const nextTitle = window.prompt("请输入新的会话名称", target.title || "新会话");
-            if (!nextTitle) return prev;
-            return prev.map((s) =>
+        const target = sessions.find((s) => s.id === sessionId);
+        if (!target) return;
+        const nextTitle = window.prompt("请输入新的会话名称", target.title || "新会话");
+        if (!nextTitle) return;
+        setSessions((prev) =>
+            prev.map((s) =>
                 s.id === sessionId
                     ? { ...s, title: nextTitle.trim() || s.title || "新会话", updatedAt: Date.now() }
                     : s
-            );
-        });
-    }, []);
+            )
+        );
+    }, [sessions]);
 
     const handleDeleteSession = useCallback((sessionId) => {
-        setSessions((prev) => {
-            const target = prev.find((s) => s.id === sessionId);
-            if (!target) return prev;
-            const confirmed = window.confirm(`确认删除会话「${target.title || "新会话"}」？`);
-            if (!confirmed) return prev;
+        const target = sessions.find((s) => s.id === sessionId);
+        if (!target) return;
+        const confirmed = window.confirm(`确认删除会话「${target.title || "新会话"}」？`);
+        if (!confirmed) return;
 
+        setSessions((prev) => {
             const next = prev.filter((s) => s.id !== sessionId);
             if (!next.length) {
                 const newSession = createSession();
@@ -105,10 +105,9 @@ export default function useSessions() {
         });
         setActiveSessionId((prevId) => {
             if (prevId !== sessionId) return prevId;
-            // Will be resolved after setSessions updates
             return null;
         });
-    }, []);
+    }, [sessions]);
 
     // Fix activeSessionId when it becomes null after deletion
     useEffect(() => {
