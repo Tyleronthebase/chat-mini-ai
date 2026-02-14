@@ -9,6 +9,12 @@ const { loadMessages, saveMessages, deleteSession } = require("./src/storage");
 const PORT = process.env.PORT ? Number(process.env.PORT) : 5173;
 const PUBLIC_DIR = path.join(__dirname, "public");
 
+function setCorsHeaders(res) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+}
+
 function sendJson(res, statusCode, body) {
   const data = JSON.stringify(body);
   res.writeHead(statusCode, {
@@ -123,6 +129,15 @@ async function handleChat(req, res) {
 
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
+
+  setCorsHeaders(res);
+
+  // Handle CORS preflight
+  if (req.method === "OPTIONS") {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
 
   if (url.pathname === "/api/chat" && req.method === "POST") {
     handleChat(req, res);
