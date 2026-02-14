@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import * as PlatformModule from "react-bits/lib/modules/Platform";
 
 const STORAGE_KEY = "chat-mini-sessions";
@@ -427,11 +429,17 @@ export default function App() {
           <section ref={chatRef} className="chat">
             {activeSession.messages.map((message, index) => (
               <div key={`${message.role}-${index}`} className={`bubble bubble--${message.role}`}>
-                {message.content}
+                {message.role === "assistant" ? (
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
+                ) : (
+                  message.content
+                )}
               </div>
             ))}
             {isStreaming && (
-              <div className="bubble bubble--assistant">{streamingReply}</div>
+              <div className="bubble bubble--assistant">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{streamingReply}</ReactMarkdown>
+              </div>
             )}
           </section>
         )}
