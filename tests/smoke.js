@@ -1,9 +1,15 @@
-const { generateReply } = require("../src/chat");
+const { streamReply } = require("../src/chat");
 
 async function run() {
-  const reply = await generateReply([{ role: "user", content: "你好" }], { useRemote: false });
-  if (!reply || typeof reply !== "string") {
-    throw new Error("Expected string reply");
+  let reply = "";
+  for await (const chunk of streamReply([{ role: "user", content: "你好" }], { useRemote: false })) {
+    if (typeof chunk !== "string") {
+      throw new Error("Expected string chunk");
+    }
+    reply += chunk;
+  }
+  if (!reply) {
+    throw new Error("Expected non-empty reply");
   }
   console.log("smoke ok");
 }

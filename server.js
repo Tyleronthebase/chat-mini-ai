@@ -3,7 +3,7 @@ require("dotenv").config();
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
-const { generateReply } = require("./src/chat");
+const { streamReply } = require("./src/chat");
 const { loadMessages, saveMessages, deleteSession } = require("./src/storage");
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 5173;
@@ -57,21 +57,6 @@ function writeSse(res, event, data) {
   res.write(`data: ${JSON.stringify(data)}\n\n`);
 }
 
-function streamText(res, text, onDone) {
-  const chunkSize = 12;
-  let index = 0;
-  const timer = setInterval(() => {
-    const chunk = text.slice(index, index + chunkSize);
-    if (!chunk) {
-      clearInterval(timer);
-      onDone();
-      return;
-    }
-    index += chunkSize;
-    writeSse(res, "chunk", { text: chunk });
-  }, 40);
-}
-
 async function handleChat(req, res) {
   let rawBody = "";
   const MAX_BODY = 1024 * 1024; // 1MB limit
@@ -104,20 +89,25 @@ async function handleChat(req, res) {
       console.log("[Chat API] GOOGLE_API_KEY:", process.env.GOOGLE_API_KEY ? "已设置" : "未设置");
       console.log("[Chat API] GOOGLE_MODEL:", process.env.GOOGLE_MODEL || "gemini-2.5-flash");
 
-      const reply = await generateReply(messages, {
+      const opts = {
         apiKey: process.env.GOOGLE_API_KEY,
-        endpoint: process.env.GOOGLE_API_BASE
-          || `https://generativelanguage.googleapis.com/v1beta/models/${process.env.GOOGLE_MODEL || "gemini-2.5-flash"}:generateContent?key=${process.env.GOOGLE_API_KEY || ""}`,
         model: process.env.GOOGLE_MODEL || "gemini-2.5-flash",
         useRemote: process.env.USE_REMOTE === "1"
-      });
-      const nextMessages = [...messages, { role: "assistant", content: reply }];
-      await saveMessages(sessionId, nextMessages);
+      };
+
       writeSse(res, "start", { ok: true });
-      streamText(res, reply, () => {
-        writeSse(res, "done", { ok: true });
-        res.end();
-      });
+
+      let fullReply = "";
+      for await (const chunk of streamReply(messages, opts)) {
+        fullReply += chunk;
+        writeSse(res, "chunk", { text: chunk });
+      }
+
+      const nextMessages = [...messages, { role: "assistant", content: fullReply || "抱歉，我刚才没听清。" }];
+      await saveMessages(sessionId, nextMessages);
+
+      writeSse(res, "done", { ok: true });
+      res.end();
     } catch (error) {
       console.error("[Chat API] Error:", error.message);
       console.error("[Chat API] Stack:", error.stack);
