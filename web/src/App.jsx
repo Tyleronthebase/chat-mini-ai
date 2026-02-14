@@ -11,7 +11,7 @@ function createSession() {
   return {
     id: crypto.randomUUID(),
     title: "新会话",
-    model: "gemini-1.5-flash",
+    model: "gemini-2.5-flash",
     messages: [],
     updatedAt: Date.now()
   };
@@ -456,10 +456,8 @@ export default function App() {
             <div className="composer__state">{isStreaming ? "正在生成回复..." : "等待输入"}</div>
             <div className="toolbar">
               <label className="select-field model-picker">
-                <select value={activeSession?.model || "gemini-1.5-flash"} onChange={handleModelChange}>
-                  <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-                  <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
-                  <option value="mock">本地 Mock</option>
+                <select value={activeSession?.model || "gemini-2.5-flash"} onChange={handleModelChange}>
+                  <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
                 </select>
               </label>
               <button type="button" className="ghost-button" disabled={!isStreaming} onClick={handleStop}>
