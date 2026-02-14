@@ -47,7 +47,7 @@ export default function useChat({ activeSession, addMessageToSession }) {
     const sendMessage = useCallback(async (text) => {
         if (!activeSession || !text.trim()) return;
 
-        const userMessage = { role: "user", content: text };
+        const userMessage = { id: crypto.randomUUID(), role: "user", content: text, createdAt: Date.now() };
         addMessageToSession(activeSession.id, userMessage);
 
         setIsStreaming(true);
@@ -83,13 +83,17 @@ export default function useChat({ activeSession, addMessageToSession }) {
             });
 
             addMessageToSession(activeSession.id, {
+                id: crypto.randomUUID(),
                 role: "assistant",
-                content: reply || "服务异常，请稍后再试。"
+                content: reply || "服务异常，请稍后再试。",
+                createdAt: Date.now()
             });
         } catch {
             addMessageToSession(activeSession.id, {
+                id: crypto.randomUUID(),
                 role: "assistant",
-                content: "生成已停止。"
+                content: "生成已停止。",
+                createdAt: Date.now()
             });
         } finally {
             setIsStreaming(false);

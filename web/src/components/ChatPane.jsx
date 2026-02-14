@@ -47,7 +47,7 @@ export default function ChatPane({
             {hasMessages && (
                 <section ref={chatRef} className="chat">
                     {messages.map((message, index) => (
-                        <div key={`${message.role}-${index}`} className={`bubble bubble--${message.role}`}>
+                        <div key={message.id || `${message.role}-${index}`} className={`bubble bubble--${message.role}`}>
                             {message.role === "assistant" ? (
                                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
                             ) : (
@@ -55,9 +55,18 @@ export default function ChatPane({
                             )}
                         </div>
                     ))}
-                    {isStreaming && (
+                    {isStreaming && streamingReply && (
                         <div className="bubble bubble--assistant">
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>{streamingReply}</ReactMarkdown>
+                        </div>
+                    )}
+                    {isStreaming && !streamingReply && (
+                        <div className="bubble bubble--assistant">
+                            <div className="typing-indicator">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
                         </div>
                     )}
                 </section>
