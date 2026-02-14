@@ -1,108 +1,234 @@
-# Chat Mini AI
+<div align="center">
 
-![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)
-![Vite](https://img.shields.io/badge/Vite-Ready-646CFF?logo=vite)
-![Node.js](https://img.shields.io/badge/Node.js-HTTP-339933?logo=node.js)
-![Gemini](https://img.shields.io/badge/Google-Gemini-8E75B2?logo=google-gemini)
+# 💬 Mini Chat AI
 
-一个基于 **React** + **Node.js** 的全栈极简聊天应用。摒弃复杂的后端框架，回归原生 HTTP 手撸 API，配合现代化的 React 前端，打造轻量级 AI 对话体验。
+**极简而强大的 AI 对话应用**
+
+[![React](https://img.shields.io/badge/React_18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Gemini](https://img.shields.io/badge/Gemini_AI-8E75B2?style=for-the-badge&logo=google-gemini&logoColor=white)](https://ai.google.dev/)
+
+零框架后端 · 真流式响应 · 深色模式 · 多会话管理
+
+[快速开始](#-快速开始) · [功能特性](#-功能特性) · [技术架构](#-技术架构) · [项目结构](#-项目结构)
+
+</div>
 
 ---
 
-## ✨ 功能亮点
+## 📸 预览
 
-- 💬 **流畅对话**：基于 Server-Sent Events (SSE) 的打字机流式回复体验。
-- 🤖 **智能模型**：默认集成 **Google Gemini 2.5 Flash**，极速响应。
-- 💾 **双端持久化**：服务端 JSON 文件存储 + 客户端 LocalStorage 同步。
-- 🛠️ **会话管理**：支持多会话创建、搜索、重命名及删除。
-- ⚡ **零依赖后端**：Node.js 后端不依赖 Express / Koa，仅使用原生 `http` 模块。
+<table>
+  <tr>
+    <td width="50%">
+      <img src="docs/screenshot-light.png" alt="浅色主题" />
+      <p align="center"><strong>☀️ 浅色主题</strong></p>
+    </td>
+    <td width="50%">
+      <img src="docs/screenshot-dark.png" alt="深色主题" />
+      <p align="center"><strong>🌙 深色主题</strong></p>
+    </td>
+  </tr>
+</table>
 
-## 🛠 技术栈
+<details>
+  <summary>⚙️ 设置面板预览</summary>
+  <br/>
+  <div align="center">
+    <img src="docs/screenshot-settings.png" alt="设置面板" width="600" />
+  </div>
+</details>
 
-### Frontend
-- **Framework**: [React 18](https://react.dev/)
-- **Build Tool**: [Vite](https://vitejs.dev/)
-- **UI/Effects**: [react-bits](https://github.com/DavidHDev/react-bits) (提供部分动效组件支持)
-- **Styling**: Pure CSS (Minimalist design)
+---
 
-### Backend
-- **Runtime**: Node.js
-- **API**: Native `http` module
-- **Streaming**: Server-Sent Events (SSE)
-- **Database**: Native File System (JSON)
+## ✨ 功能特性
+
+### 核心体验
+
+| 功能 | 说明 |
+|------|------|
+| ⚡ **真流式对话** | 基于 Gemini `streamGenerateContent` 的逐 Token 流式输出，首字到达时间极短 |
+| 📝 **Markdown 渲染** | AI 回复支持代码块、表格、列表、引用等完整 Markdown 格式 |
+| 💬 **多会话管理** | 创建、搜索、重命名、删除会话，数据自动持久化 |
+| 🌗 **深色模式** | 精心调校的 Catppuccin 风格暗色主题，一键切换 |
+| ⌨️ **智能输入** | Enter 发送 / Shift+Enter 换行，可在设置中关闭 |
+
+### 设置面板
+
+| 模块 | 功能 |
+|------|------|
+| ⚙️ **通用** | 主题切换、默认模型、字体大小、回车发送开关、系统提示词 |
+| ⌨️ **快捷键** | 键盘快捷操作速查 |
+| ℹ️ **关于** | 版本信息、技术栈、项目链接 |
+
+### 更多亮点
+
+- 🛡️ **错误边界** — React Error Boundary 优雅处理异常
+- 🔒 **请求限制** — 1MB 请求体上限防止内存溢出
+- 🌐 **CORS 支持** — 开发模式跨域无缝衔接
+- 🎯 **消息追踪** — 每条消息携带 UUID 和时间戳
+- ⏳ **加载动画** — 等待首个 Token 时显示弹跳点动画
+- 📦 **零框架后端** — 不依赖 Express/Koa，纯 Node.js 原生 `http`
+
+---
 
 ## 🚀 快速开始
 
-### 1. 安装依赖
+### 前置要求
+
+- [Node.js](https://nodejs.org/) ≥ 18
+- [Google AI API Key](https://aistudio.google.com/apikey)
+
+### 1. 克隆 & 安装
 
 ```bash
+git clone https://github.com/Tyleronthebase/chat-mini-ai.git
+cd chat-mini-ai
 npm install
 ```
 
 ### 2. 配置环境变量
 
-复制 `.env.example` 为 `.env` 并填入你的 Google API Key：
-
 ```bash
 cp .env.example .env
 ```
 
-配置项：
+编辑 `.env`：
+
 ```dotenv
-GOOGLE_API_KEY=your_api_key_here
-USE_REMOTE=1
-GOOGLE_MODEL=gemini-2.5-flash  # 默认使用 2.5 Flash
-PORT=5173
+GOOGLE_API_KEY=your_api_key_here   # 必填：Google AI API Key
+USE_REMOTE=1                        # 1 = 调用远程 API，0 = 本地 Mock
+GOOGLE_MODEL=gemini-2.5-flash       # 默认模型
+PORT=5173                           # 服务端口
 ```
 
-### 3. 开发与运行
+### 3. 启动开发
 
-**开发模式（推荐）：**
 ```bash
-# 终端 1：启动 Vite 前端热更新
+# 终端 1 — Vite 前端热更新
 npm run dev
 
-# 终端 2：启动后端服务
+# 终端 2 — Node.js 后端
 npm start
 ```
 
-**生产部署：**
+打开 **http://localhost:5173** 开始聊天 🎉
+
+### 4. 生产部署
+
 ```bash
-# 构建前端资源到 public/ 目录
-npm run build
-
-# 启动全栈服务
-npm start
+npm run build    # 构建前端 → public/
+npm start        # 启动全栈服务
 ```
 
-访问地址：`http://localhost:5173`
+---
+
+## 🏗 技术架构
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                        Client                           │
+│  React 18 + Vite + react-markdown + react-bits          │
+│                                                         │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐              │
+│  │ Sidebar  │  │ ChatPane │  │ Composer │              │
+│  └────┬─────┘  └────┬─────┘  └────┬─────┘              │
+│       │              │             │                     │
+│  ┌────┴──────────────┴─────────────┴─────┐              │
+│  │  useSessions  ·  useChat  ·  useSettings │           │
+│  └───────────────────┬───────────────────┘              │
+└──────────────────────┼──────────────────────────────────┘
+                       │  SSE Stream / JSON API
+┌──────────────────────┼──────────────────────────────────┐
+│                   Server                                │
+│  Node.js native http · CORS · MIME · Body Limit         │
+│                                                         │
+│  ┌──────────┐  ┌──────────┐                             │
+│  │ chat.js  │  │storage.js│                             │
+│  │ Gemini   │  │ JSON FS  │                             │
+│  └────┬─────┘  └──────────┘                             │
+└───────┼─────────────────────────────────────────────────┘
+        │  streamGenerateContent
+┌───────┴─────────────────────────────────────────────────┐
+│              Google Gemini API                          │
+└─────────────────────────────────────────────────────────┘
+```
+
+---
 
 ## 📂 项目结构
 
 ```text
-.
-├── web/                    # React 前端源文件 (Vite Root)
-│   ├── src/                # 组件与逻辑 (App.jsx)
-│   └── index.html          # 入口 HTML
-├── public/                 # 构建产物 (由 server.js 托管)
-├── src/                    # 后端逻辑
-│   ├── chat.js             # Gemini 模型调用封装
-│   └── storage.js          # 本地 JSON 数据读写
-├── data/                   # 数据存储目录
-├── server.js               # Node.js 原生 HTTP服务器
-└── vite.config.mjs         # Vite 构建配置
+chat-mini-ai/
+├── web/                          # React 前端 (Vite Root)
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── ChatPane.jsx      # 消息展示区 + Markdown 渲染
+│   │   │   ├── Composer.jsx      # 输入框 + 模型选择器
+│   │   │   ├── Sidebar.jsx       # 会话列表 + 搜索 + 折叠
+│   │   │   ├── SettingsModal.jsx # 设置面板 (3 Tab)
+│   │   │   └── ErrorBoundary.jsx # 错误边界
+│   │   ├── hooks/
+│   │   │   ├── useSessions.js    # 会话 CRUD + 持久化
+│   │   │   ├── useChat.js        # 流式通信 + 中止控制
+│   │   │   └── useSettings.js    # 设置管理 + 主题切换
+│   │   ├── App.jsx               # 组合根 (~70 行)
+│   │   ├── main.jsx              # 入口 + ErrorBoundary
+│   │   └── styles.css            # 全局样式 + 深色主题
+│   └── index.html
+├── src/                          # 后端逻辑
+│   ├── chat.js                   # Gemini 流式调用 (async generator)
+│   └── storage.js                # 按 sessionId 分文件存储
+├── server.js                     # 原生 HTTP 服务器
+├── docs/                         # 文档资源
+├── tests/                        # 测试
+│   ├── smoke.js                  # 流式 API 冒烟测试
+│   └── storage.js                # 存储层测试
+└── vite.config.mjs               # Vite 配置
 ```
-
-## ❤️ 致谢 (Credits)
-
-本项目参考或使用了以下优秀的开源技术与资源：
-
-- **[React](https://react.dev/)** - 用于构建用户界面的 JavaScript 库
-- **[Vite](https://vitejs.dev/)** - 下一代前端构建工具
-- **[Google Gemini](https://ai.google.dev/)** - 提供强大的生成式 AI 模型支持
-- **[react-bits](https://github.com/DavidHDev/react-bits)** - 提供精美的 React UI 动效组件库
-- **[Node.js](https://nodejs.org/)** - JavaScript 运行时
 
 ---
 
-Designed with ❤️ by Tyler
+## 🧪 测试
+
+```bash
+npm test
+```
+
+运行 `smoke.js`（流式 API 验证）和 `storage.js`（持久化验证）两组测试。
+
+---
+
+## 🗺️ 路线图
+
+- [ ] 🔊 语音输入/输出
+- [ ] 📎 图片/文件上传
+- [ ] 🧠 对话记忆 & 上下文窗口管理
+- [ ] 🌍 多语言界面
+- [ ] 📱 移动端响应式优化
+- [ ] 🔗 分享对话链接
+
+---
+
+## ❤️ 致谢
+
+<table>
+  <tr>
+    <td align="center"><a href="https://react.dev/"><strong>React</strong></a><br/>用户界面库</td>
+    <td align="center"><a href="https://vitejs.dev/"><strong>Vite</strong></a><br/>构建工具</td>
+    <td align="center"><a href="https://ai.google.dev/"><strong>Gemini</strong></a><br/>AI 模型</td>
+    <td align="center"><a href="https://github.com/DavidHDev/react-bits"><strong>react-bits</strong></a><br/>动效组件</td>
+    <td align="center"><a href="https://nodejs.org/"><strong>Node.js</strong></a><br/>运行时</td>
+  </tr>
+</table>
+
+---
+
+<div align="center">
+
+**Designed with ❤️ by Tyler**
+
+<sub>如果觉得有帮助，请给个 ⭐ Star 支持一下！</sub>
+
+</div>
