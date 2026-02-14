@@ -42,6 +42,7 @@ async function streamResponse(response, onEvent) {
 export default function useChat({ activeSession, addMessageToSession }) {
     const [isStreaming, setIsStreaming] = useState(false);
     const [streamingReply, setStreamingReply] = useState("");
+    const [lastError, setLastError] = useState(null);
     const abortRef = useRef(null);
 
     const sendMessage = useCallback(async (text) => {
@@ -52,6 +53,7 @@ export default function useChat({ activeSession, addMessageToSession }) {
 
         setIsStreaming(true);
         setStreamingReply("");
+        setLastError(null);
 
         const abortController = new AbortController();
         abortRef.current = abortController;
@@ -88,13 +90,17 @@ export default function useChat({ activeSession, addMessageToSession }) {
                 content: reply || "服务异常，请稍后再试。",
                 createdAt: Date.now()
             });
-        } catch {
+        } catch (err) {
+            const wasCancelled = err?.name === "AbortError";
+            setLastError(wasCancelled ? null : (err?.message || "请求失败"));
             addMessageToSession(activeSession.id, {
                 id: crypto.randomUUID(),
                 role: "assistant",
-                content: "生成已停止。",
+                content: wasCancelled ? "生成已停止。" : "请求失败，请稍后再试。",
                 createdAt: Date.now()
             });
+            // Auto-clear error after 10s
+            if (!wasCancelled) setTimeout(() => setLastError(null), 10_000);
         } finally {
             setIsStreaming(false);
             setStreamingReply("");
@@ -111,6 +117,7 @@ export default function useChat({ activeSession, addMessageToSession }) {
     return {
         isStreaming,
         streamingReply,
+        lastError,
         sendMessage,
         stopStreaming
     };

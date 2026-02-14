@@ -147,6 +147,17 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // Health check
+  if (url.pathname === "/api/health" && req.method === "GET") {
+    sendJson(res, 200, {
+      status: "ok",
+      uptime: process.uptime(),
+      model: process.env.GOOGLE_MODEL || "gemini-2.5-flash",
+      hasApiKey: !!process.env.GOOGLE_API_KEY
+    });
+    return;
+  }
+
   if (url.pathname === "/api/chat" && req.method === "POST") {
     handleChat(req, res);
     return;

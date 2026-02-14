@@ -3,6 +3,7 @@ import * as PlatformModule from "react-bits/lib/modules/Platform";
 import useSessions from "./hooks/useSessions";
 import useChat from "./hooks/useChat";
 import useSettings from "./hooks/useSettings";
+import useConnectionStatus from "./hooks/useConnectionStatus";
 import Sidebar from "./components/Sidebar";
 import ChatPane from "./components/ChatPane";
 import Composer from "./components/Composer";
@@ -26,12 +27,14 @@ export default function App() {
     clearAllSessions
   } = useSessions();
 
-  const { isStreaming, streamingReply, sendMessage, stopStreaming } = useChat({
+  const { isStreaming, streamingReply, lastError, sendMessage, stopStreaming } = useChat({
     activeSession,
     addMessageToSession
   });
 
   const { settings, updateSetting, resetSettings } = useSettings();
+
+  const connectionStatus = useConnectionStatus({ isStreaming, lastError });
 
   const [searchQuery, setSearchQuery] = useState("");
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -41,7 +44,7 @@ export default function App() {
       <Sidebar
         sessions={sessions}
         activeSessionId={activeSessionId}
-        isStreaming={isStreaming}
+        connectionStatus={connectionStatus}
         onSelectSession={setActiveSessionId}
         onCreateSession={handleCreateSession}
         onRenameSession={handleRenameSession}

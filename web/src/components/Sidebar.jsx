@@ -8,7 +8,7 @@ function formatTime(timestamp) {
 export default function Sidebar({
     sessions,
     activeSessionId,
-    isStreaming,
+    connectionStatus,
     onSelectSession,
     onCreateSession,
     onRenameSession,
@@ -99,7 +99,13 @@ export default function Sidebar({
                     </nav>
 
                     <div className="sidebar__footer">
-                        <div className="status-pill">{isStreaming ? "生成中" : "就绪"}</div>
+                        <div
+                            className={`status-pill status-pill--${connectionStatus.status}`}
+                            title={connectionStatus.serverInfo ? `Uptime: ${Math.floor(connectionStatus.serverInfo.uptime)}s` : ""}
+                        >
+                            <span className="status-dot" style={{ background: connectionStatus.color }} />
+                            {connectionStatus.label}
+                        </div>
                         <button className="sidebar__settings-btn" onClick={onOpenSettings}>
                             <span>⚙️</span>
                             <span>设置和帮助</span>
