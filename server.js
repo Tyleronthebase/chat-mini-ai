@@ -106,11 +106,13 @@ async function handleChat(req, res) {
       console.log("[Chat API] USE_REMOTE:", process.env.USE_REMOTE);
       console.log("[Chat API] GOOGLE_API_KEY:", process.env.GOOGLE_API_KEY ? "已设置" : "未设置");
       console.log("[Chat API] GOOGLE_MODEL:", process.env.GOOGLE_MODEL || "gemini-2.5-flash");
+      console.log("[Chat API] GOOGLE_API_BASE:", process.env.GOOGLE_API_BASE || "(默认 Gemini)");
 
       const opts = {
         apiKey: process.env.GOOGLE_API_KEY,
         model: process.env.GOOGLE_MODEL || "gemini-2.5-flash",
-        useRemote: process.env.USE_REMOTE === "1"
+        useRemote: process.env.USE_REMOTE === "1",
+        apiBase: process.env.GOOGLE_API_BASE || ""
       };
 
       writeSse(res, "start", { ok: true });
