@@ -1400,6 +1400,216 @@ textarea {
   }
 }
 
+/* ─── Message Actions ─── */
+
+.bubble--assistant {
+  position: relative;
+}
+
+.message-actions {
+  display: flex;
+  gap: 2px;
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid transparent;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.bubble--assistant:hover .message-actions {
+  opacity: 1;
+  border-top-color: var(--border, #e8eaed);
+}
+
+.msg-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary, #5f6368);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.msg-action-btn:hover {
+  background: var(--bg-hover, #e8eaed);
+  color: var(--text-primary, #202124);
+}
+
+.msg-action-btn.active {
+  color: #1a73e8;
+  background: #d7e3fd;
+}
+
+.msg-more-wrapper {
+  position: relative;
+}
+
+.msg-more-menu {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin-bottom: 4px;
+  background: var(--bg-primary, #ffffff);
+  border: 1px solid var(--border, #dadce0);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  padding: 4px;
+  min-width: 160px;
+  z-index: 100;
+}
+
+.msg-more-menu button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-primary, #202124);
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.msg-more-menu button:hover {
+  background: var(--bg-hover, #f1f3f4);
+}
+
+/* ─── Composer Attach & Previews ─── */
+
+.composer__input-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 0;
+  border-radius: 18px;
+  transition: box-shadow 0.2s ease;
+}
+
+.composer__input-row.drag-over {
+  box-shadow: inset 0 0 0 2px #1a73e8;
+  border-radius: 18px;
+}
+
+.composer__attach {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-top: 4px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-secondary, #5f6368);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.composer__attach:hover {
+  background: var(--bg-hover, #e8eaed);
+  color: var(--text-primary, #202124);
+}
+
+.composer__attach:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.composer__previews {
+  display: flex;
+  gap: 8px;
+  padding: 8px 12px 0;
+  flex-wrap: wrap;
+}
+
+.composer__preview {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border, #dadce0);
+}
+
+.composer__preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.composer__preview-remove {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.composer__preview-remove:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* ─── Bubble Images ─── */
+
+.bubble__images {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.bubble__image {
+  width: 120px;
+  max-height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--border, #dadce0);
+  cursor: pointer;
+}
+
+.bubble__image:hover {
+  opacity: 0.85;
+}
+
+/* ─── Dark theme overrides ─── */
+
+[data-theme="dark"] .msg-action-btn.active {
+  color: #8ab4f8;
+  background: rgba(138, 180, 248, 0.15);
+}
+
+[data-theme="dark"] .msg-more-menu {
+  background: #292a2d;
+  border-color: #3c4043;
+}
+
+[data-theme="dark"] .msg-more-menu button:hover {
+  background: #3c4043;
+}
+
+[data-theme="dark"] .composer__input-row.drag-over {
+  box-shadow: inset 0 0 0 2px #8ab4f8;
+}
+
 @media (max-width: 960px) {
   .app-shell {
     grid-template-columns: 1fr;
@@ -1420,5 +1630,9 @@ textarea {
   .composer,
   .empty-state {
     width: calc(100% - 24px);
+  }
+
+  .message-actions {
+    opacity: 1;
   }
 }

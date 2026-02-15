@@ -1,12 +1,24 @@
 import { useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import MessageActions from "./MessageActions";
 
 const QUICK_PROMPTS = [
     "帮我做一份今天的待办安排",
     "教我快速上手这个项目",
     "随便聊点有趣的话题"
 ];
+
+function UserImages({ images }) {
+    if (!images || images.length === 0) return null;
+    return (
+        <div className="bubble__images">
+            {images.map((img, i) => (
+                <img key={i} src={img} alt={`上传图片 ${i + 1}`} className="bubble__image" />
+            ))}
+        </div>
+    );
+}
 
 export default function ChatPane({
     activeSession,
@@ -48,8 +60,14 @@ export default function ChatPane({
                 <section ref={chatRef} className="chat">
                     {messages.map((message, index) => (
                         <div key={message.id || `${message.role}-${index}`} className={`bubble bubble--${message.role}`}>
+                            {message.role === "user" && message.images && (
+                                <UserImages images={message.images} />
+                            )}
                             {message.role === "assistant" ? (
-                                <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
+                                <>
+                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
+                                    <MessageActions content={message.content} messageId={message.id} />
+                                </>
                             ) : (
                                 message.content
                             )}

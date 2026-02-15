@@ -41,11 +41,18 @@ async function* openaiStream(messages, { apiBase, apiKey, model, systemPrompt, s
     }
 
     for (const msg of messages) {
-        if (msg && typeof msg.content === "string") {
-            openaiMessages.push({
-                role: msg.role === "model" ? "assistant" : msg.role,
-                content: msg.content
-            });
+        if (!msg) continue;
+        const role = msg.role === "model" ? "assistant" : msg.role;
+
+        // Build content with images if present (OpenAI Vision format)
+        if (msg.images && msg.images.length > 0 && msg.content) {
+            const parts = [{ type: "text", text: msg.content }];
+            for (const imgUrl of msg.images) {
+                parts.push({ type: "image_url", image_url: { url: imgUrl } });
+            }
+            openaiMessages.push({ role, content: parts });
+        } else if (typeof msg.content === "string") {
+            openaiMessages.push({ role, content: msg.content });
         }
     }
 
@@ -156,10 +163,16 @@ export default function useChat({ activeSession, addMessageToSession, settings }
     const [lastError, setLastError] = useState(null);
     const abortRef = useRef(null);
 
-    const sendMessage = useCallback(async (text) => {
-        if (!activeSession || !text.trim()) return;
+    const sendMessage = useCallback(async (text, images = []) => {
+        if (!activeSession || (!text.trim() && images.length === 0)) return;
 
-        const userMessage = { id: crypto.randomUUID(), role: "user", content: text, createdAt: Date.now() };
+        const userMessage = {
+            id: crypto.randomUUID(),
+            role: "user",
+            content: text || "(图片)",
+            images: images.length > 0 ? images : undefined,
+            createdAt: Date.now()
+        };
         addMessageToSession(activeSession.id, userMessage);
 
         setIsStreaming(true);
