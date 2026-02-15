@@ -458,6 +458,132 @@ textarea {
   margin: 4px 0;
 }
 
+/* ─── API Settings ─── */
+
+.setting-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border, #dadce0);
+  border-radius: 12px;
+  background: var(--bg-secondary, #f8f9fa);
+  color: var(--text-primary, #202124);
+  font-size: 13px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.setting-input:focus {
+  outline: none;
+  border-color: #7aa7ff;
+  box-shadow: 0 0 0 3px rgba(11, 87, 208, 0.12);
+}
+
+.api-mode-switcher {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.api-mode-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 8px;
+  border: 2px solid var(--border, #dadce0);
+  border-radius: 14px;
+  background: var(--bg-secondary, #f8f9fa);
+  color: var(--text-primary, #202124);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.api-mode-option:hover {
+  border-color: #7aa7ff;
+}
+
+.api-mode-option.active {
+  border-color: #1a73e8;
+  background: #d7e3fd;
+  color: #1a73e8;
+}
+
+.api-mode-option__icon {
+  font-size: 20px;
+}
+
+.api-mode-option__label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.api-mode-option__desc {
+  font-size: 11px;
+  color: var(--text-secondary, #5f6368);
+  text-align: center;
+}
+
+.api-mode-option.active .api-mode-option__desc {
+  color: #1a73e8;
+}
+
+.api-key-input {
+  position: relative;
+  display: flex;
+}
+
+.api-key-input .setting-input {
+  padding-right: 44px;
+  font-family: monospace;
+}
+
+.api-key-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  opacity: 0.6;
+}
+
+.api-key-toggle:hover {
+  opacity: 1;
+}
+
+.api-status-hint {
+  font-size: 12px;
+  padding: 4px 0;
+}
+
+.api-status-hint--ok {
+  color: #0d904f;
+}
+
+.api-status-hint--warn {
+  color: #ea8600;
+}
+
+.api-mock-hint {
+  margin-top: 8px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--bg-secondary, #f8f9fa);
+  font-size: 13px;
+  color: var(--text-secondary, #5f6368);
+  line-height: 1.6;
+}
+
+.api-mock-hint code {
+  background: var(--bg-hover, #e8eaed);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
 /* Theme switcher */
 .theme-switcher {
   display: flex;

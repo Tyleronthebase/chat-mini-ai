@@ -27,12 +27,13 @@ export default function App() {
     clearAllSessions
   } = useSessions();
 
+  const { settings, updateSetting, resetSettings } = useSettings();
+
   const { isStreaming, streamingReply, lastError, sendMessage, stopStreaming } = useChat({
     activeSession,
-    addMessageToSession
+    addMessageToSession,
+    settings
   });
-
-  const { settings, updateSetting, resetSettings } = useSettings();
 
   const connectionStatus = useConnectionStatus({ isStreaming, lastError });
 

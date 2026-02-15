@@ -7,7 +7,11 @@ const DEFAULTS = {
     defaultModel: "gemini-2.5-flash",
     systemPrompt: "",
     sendOnEnter: true,
-    fontSize: "medium"
+    fontSize: "medium",
+    // API 配置
+    apiMode: "direct",       // "direct" | "backend" | "mock"
+    apiBase: "https://demo.voapi.top",
+    apiKey: ""
 };
 
 export default function useSettings() {

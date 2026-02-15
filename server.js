@@ -92,9 +92,11 @@ async function handleChat(req, res) {
 
     res.writeHead(200, {
       "Content-Type": "text/event-stream; charset=utf-8",
-      "Cache-Control": "no-cache",
+      "Cache-Control": "no-cache, no-transform",
+      "X-Accel-Buffering": "no",
       Connection: "keep-alive"
     });
+    res.flushHeaders();
 
     try {
       const payload = rawBody ? JSON.parse(rawBody) : {};

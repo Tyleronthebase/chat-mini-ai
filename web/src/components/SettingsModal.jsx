@@ -2,6 +2,7 @@ import { useState } from "react";
 
 const TABS = [
     { id: "general", icon: "⚙️", label: "通用" },
+    { id: "api", icon: "🔑", label: "API" },
     { id: "shortcuts", icon: "⌨️", label: "快捷键" },
     { id: "about", icon: "ℹ️", label: "关于" }
 ];
@@ -10,6 +11,12 @@ const SHORTCUTS = [
     { keys: "Enter", desc: "发送消息" },
     { keys: "Shift + Enter", desc: "换行" },
     { keys: "Esc", desc: "停止生成" }
+];
+
+const API_MODES = [
+    { value: "direct", icon: "⚡", label: "直连", desc: "前端直连 API（推荐）" },
+    { value: "mock", icon: "🧪", label: "Mock", desc: "模拟输出，测试渲染" },
+    { value: "backend", icon: "🔄", label: "后端代理", desc: "通过 Node.js 中转" }
 ];
 
 export default function SettingsModal({
@@ -21,6 +28,7 @@ export default function SettingsModal({
     onClearAll
 }) {
     const [activeTab, setActiveTab] = useState("general");
+    const [showApiKey, setShowApiKey] = useState(false);
 
     if (!open) return null;
 
@@ -173,6 +181,96 @@ export default function SettingsModal({
                         </div>
                     )}
 
+                    {activeTab === "api" && (
+                        <div className="settings-section">
+                            {/* API Mode */}
+                            <div className="setting-row setting-row--vertical">
+                                <div className="setting-info">
+                                    <div className="setting-label">接入模式</div>
+                                    <div className="setting-desc">选择 API 的调用方式</div>
+                                </div>
+                                <div className="api-mode-switcher">
+                                    {API_MODES.map((mode) => (
+                                        <button
+                                            key={mode.value}
+                                            className={`api-mode-option${settings.apiMode === mode.value ? " active" : ""}`}
+                                            onClick={() => onUpdateSetting("apiMode", mode.value)}
+                                        >
+                                            <span className="api-mode-option__icon">{mode.icon}</span>
+                                            <span className="api-mode-option__label">{mode.label}</span>
+                                            <span className="api-mode-option__desc">{mode.desc}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {settings.apiMode === "direct" && (
+                                <>
+                                    <div className="setting-divider" />
+
+                                    {/* API Base URL */}
+                                    <div className="setting-row setting-row--vertical">
+                                        <div className="setting-info">
+                                            <div className="setting-label">API 地址</div>
+                                            <div className="setting-desc">OpenAI 兼容的 API 地址（VoAPI、OneAPI 等）</div>
+                                        </div>
+                                        <input
+                                            className="setting-input"
+                                            type="url"
+                                            placeholder="https://demo.voapi.top"
+                                            value={settings.apiBase}
+                                            onChange={(e) => onUpdateSetting("apiBase", e.target.value)}
+                                        />
+                                    </div>
+
+                                    {/* API Key */}
+                                    <div className="setting-row setting-row--vertical">
+                                        <div className="setting-info">
+                                            <div className="setting-label">API 密钥</div>
+                                            <div className="setting-desc">在中转站获取的 API 令牌（保存在本地，不会上传）</div>
+                                        </div>
+                                        <div className="api-key-input">
+                                            <input
+                                                className="setting-input"
+                                                type={showApiKey ? "text" : "password"}
+                                                placeholder="sk-xxxxxxxxxxxxxxxx"
+                                                value={settings.apiKey}
+                                                onChange={(e) => onUpdateSetting("apiKey", e.target.value)}
+                                            />
+                                            <button
+                                                className="api-key-toggle"
+                                                onClick={() => setShowApiKey((v) => !v)}
+                                                title={showApiKey ? "隐藏" : "显示"}
+                                            >
+                                                {showApiKey ? "🙈" : "👁️"}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Status hint */}
+                                    <div className="api-status-hint">
+                                        {settings.apiKey
+                                            ? <span className="api-status-hint--ok">✅ API 密钥已配置</span>
+                                            : <span className="api-status-hint--warn">⚠️ 请输入 API 密钥</span>
+                                        }
+                                    </div>
+                                </>
+                            )}
+
+                            {settings.apiMode === "mock" && (
+                                <div className="api-mock-hint">
+                                    🧪 Mock 模式下会模拟流式输出一段包含 Markdown 的示例回复，用于测试前端渲染效果。不需要 API 密钥。
+                                </div>
+                            )}
+
+                            {settings.apiMode === "backend" && (
+                                <div className="api-mock-hint">
+                                    🔄 通过 Node.js 后端代理调用 API，需要在 <code>.env</code> 文件中配置 API 密钥。
+                                </div>
+                            )}
+                        </div>
+                    )}
+
                     {activeTab === "shortcuts" && (
                         <div className="settings-section">
                             <div className="shortcuts-list">
@@ -198,18 +296,18 @@ export default function SettingsModal({
                             <div className="about-hero">
                                 <div className="about-icon">💬</div>
                                 <h3 className="about-name">Mini Chat AI</h3>
-                                <div className="about-version">v0.1.0</div>
+                                <div className="about-version">v0.2.0</div>
                             </div>
 
                             <div className="about-desc">
                                 一个轻量级 AI 聊天应用，基于 React + Node.js 构建，
-                                使用 Google Gemini API 提供智能对话能力。
+                                支持 OpenAI 兼容 API 直连和流式输出。
                             </div>
 
                             <div className="about-stack">
                                 <div className="about-stack__title">技术栈</div>
                                 <div className="about-badges">
-                                    {["React 18", "Vite", "Node.js", "Gemini API", "SSE Streaming"].map((t) => (
+                                    {["React 18", "Vite", "Node.js", "OpenAI API", "SSE Streaming"].map((t) => (
                                         <span key={t} className="about-badge">{t}</span>
                                     ))}
                                 </div>
