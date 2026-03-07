@@ -24,7 +24,9 @@ export default function ChatPane({
     activeSession,
     isStreaming,
     streamingReply,
-    onSendMessage
+    onSendMessage,
+    onSpeak,
+    speakingId
 }) {
     const chatRef = useRef(null);
     const messages = activeSession?.messages || [];
@@ -66,7 +68,7 @@ export default function ChatPane({
                             {message.role === "assistant" ? (
                                 <>
                                     <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
-                                    <MessageActions content={message.content} messageId={message.id} />
+                                    <MessageActions content={message.content} messageId={message.id} onSpeak={onSpeak} isSpeakingThis={speakingId === message.id} />
                                 </>
                             ) : (
                                 message.content

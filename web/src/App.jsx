@@ -4,6 +4,8 @@ import useSessions from "./hooks/useSessions";
 import useChat from "./hooks/useChat";
 import useSettings from "./hooks/useSettings";
 import useConnectionStatus from "./hooks/useConnectionStatus";
+import useSpeechRecognition from "./hooks/useSpeechRecognition";
+import useSpeechSynthesis from "./hooks/useSpeechSynthesis";
 import Sidebar from "./components/Sidebar";
 import ChatPane from "./components/ChatPane";
 import Composer from "./components/Composer";
@@ -37,6 +39,10 @@ export default function App() {
 
   const connectionStatus = useConnectionStatus({ isStreaming, lastError });
 
+  // Speech hooks
+  const speechRecognition = useSpeechRecognition();
+  const { speak, speakingId, isSupported: ttsSupported } = useSpeechSynthesis();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -66,6 +72,8 @@ export default function App() {
           isStreaming={isStreaming}
           streamingReply={streamingReply}
           onSendMessage={sendMessage}
+          onSpeak={ttsSupported ? speak : null}
+          speakingId={speakingId}
         />
 
         <Composer
@@ -75,6 +83,7 @@ export default function App() {
           onSend={sendMessage}
           onStop={stopStreaming}
           sendOnEnter={settings.sendOnEnter}
+          speechRecognition={speechRecognition}
         />
       </main>
 
