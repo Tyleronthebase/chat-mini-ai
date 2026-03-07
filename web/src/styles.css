@@ -1299,6 +1299,12 @@ textarea {
   align-items: center;
 }
 
+.composer__left-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .composer__state {
   font-size: 12px;
   color: #5f6368;
