@@ -107,20 +107,35 @@ export default function Composer({
                     onChange={(e) => { addFiles(e.target.files); e.target.value = ""; }}
                 />
 
-                <textarea
-                    name="message"
-                    rows={2}
-                    placeholder={sr.isListening ? "正在聆听..." : (sendOnEnter ? "输入消息，回车发送，Shift+Enter换行" : "输入消息，点击发送按钮")}
-                    value={text}
-                    disabled={isStreaming}
-                    onChange={(e) => setText(e.target.value)}
-                    onKeyDown={(e) => {
-                        if (sendOnEnter && e.key === "Enter" && !e.shiftKey) {
-                            e.preventDefault();
-                            e.currentTarget.form?.requestSubmit();
-                        }
-                    }}
-                />
+                {sr.isListening ? (
+                    /* Google-style voice wave overlay */
+                    <div className="voice-wave-overlay" onClick={() => sr.stop()}>
+                        <div className="voice-wave">
+                            <span className="voice-wave__bar" style={{ background: "#4285F4" }} />
+                            <span className="voice-wave__bar" style={{ background: "#EA4335" }} />
+                            <span className="voice-wave__bar" style={{ background: "#FBBC05" }} />
+                            <span className="voice-wave__bar" style={{ background: "#34A853" }} />
+                        </div>
+                        <div className="voice-wave__hint">
+                            {sr.interim || "请说话..."}
+                        </div>
+                    </div>
+                ) : (
+                    <textarea
+                        name="message"
+                        rows={2}
+                        placeholder={sendOnEnter ? "输入消息，回车发送，Shift+Enter换行" : "输入消息，点击发送按钮"}
+                        value={text}
+                        disabled={isStreaming}
+                        onChange={(e) => setText(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (sendOnEnter && e.key === "Enter" && !e.shiftKey) {
+                                e.preventDefault();
+                                e.currentTarget.form?.requestSubmit();
+                            }
+                        }}
+                    />
+                )}
 
                 {/* Mic button */}
                 {sr.isSupported && (
