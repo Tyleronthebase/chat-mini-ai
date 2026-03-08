@@ -52,7 +52,9 @@
 | 📝 **Markdown 渲染** | AI 回复支持代码块、表格、列表、引用等完整 Markdown 格式 |
 | 💬 **多会话管理** | 创建、搜索、重命名、删除会话，数据自动持久化 |
 | 🌗 **深色模式** | 精心调校的 Catppuccin 风格暗色主题，一键切换 |
-| ⌨️ **智能输入** | Enter 发送 / Shift+Enter 换行，可在设置中关闭 |
+| 📎 **多模态输入** | 支持拖拽、点击上传图片（需 API 模型支持 Vision） |
+| 🎙️ **智能语音** | 全新语音交互：录音波浪动画、语音发送指令（“发送”），及 AI 语音朗读 |
+| 🛠️ **消息快捷操作** | AI 回复悬停支持：点赞/点踩、一键复制、导出 Markdown/TXT |
 
 ### API 接入（3 种模式）
 
@@ -160,7 +162,8 @@ npm start        # 启动全栈服务
 │       │              │             │                     │
 │  ┌────┴──────────────┴─────────────┴─────────────┐      │
 │  │ useSessions · useChat · useSettings            │      │
-│  │ useConnectionStatus                            │      │
+│  │ useConnectionStatus · useSpeechRecognition     │      │
+│  │ useSpeechSynthesis                             │      │
 │  └──────────┬────────────────────┬────────────────┘      │
 └─────────────┼────────────────────┼──────────────────────┘
               │                    │
@@ -187,18 +190,21 @@ chat-mini-ai/
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── ChatPane.jsx      # 消息展示区 + Markdown 渲染
-│   │   │   ├── Composer.jsx      # 输入框 + 模型选择器
+│   │   │   ├── Composer.jsx      # 输入框 + 模型选择器 + 语音/图片
 │   │   │   ├── Sidebar.jsx       # 会话列表 + 搜索 + 状态指示
 │   │   │   ├── SettingsModal.jsx # 设置面板 (4 Tab)
+│   │   │   ├── MessageActions.jsx# 消息快捷操作 (复制/导出/朗读)
 │   │   │   └── ErrorBoundary.jsx # 错误边界
 │   │   ├── hooks/
 │   │   │   ├── useSessions.js    # 会话 CRUD + 持久化
 │   │   │   ├── useChat.js        # 3 模式流式通信 + 中止控制
 │   │   │   ├── useSettings.js    # 设置管理 + API 配置
-│   │   │   └── useConnectionStatus.js # 5 级连接状态检测
+│   │   │   ├── useConnectionStatus.js # 5 级连接状态检测
+│   │   │   ├── useSpeechRecognition.js# 语音转文字 (STT)
+│   │   │   └── useSpeechSynthesis.js  # 文本转语音 (TTS)
 │   │   ├── App.jsx               # 组合根
 │   │   ├── main.jsx              # 入口 + ErrorBoundary
-│   │   └── styles.css            # 全局样式 + 深色主题
+│   │   └── styles.css            # 全局样式 + 深色主题 + 动画
 │   └── index.html
 ├── src/                          # 后端逻辑
 │   ├── chat.js                   # Gemini + OpenAI 双格式流式调用
@@ -228,8 +234,8 @@ npm test
 - [x] ⚡ 前端直连 API（无后端代理）
 - [x] 🧪 Mock 模式测试渲染
 - [x] 🟢 智能连接状态检测
-- [ ] 🔊 语音输入/输出
-- [ ] 📎 图片/文件上传
+- [x] 🔊 语音输入/输出 (支持语音指令发送)
+- [x] 📎 图片/文件上传 (多模态 Vision 支持)
 - [ ] 🧠 对话记忆 & 上下文窗口管理
 - [ ] 🌍 多语言界面
 - [ ] 📱 移动端响应式优化
